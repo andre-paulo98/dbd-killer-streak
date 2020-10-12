@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+	<title>Otz-Streak-Overlay</title>
+	<style>
+		body { /*background-color: #777;*/ margin: 0; font-family: Verdana; color: #fff; font-weight: bold; overflow: hidden;}
+		.bottom { background-color: rgba(20, 20, 20, 0.6); width: 99%; margin: 0 auto; border-radius: 20px; padding: 3px;}
+		table { width: 100%; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 0; table-layout: fixed}
+		td {text-align: center;}
+		img { width: 100% }
+		.current {color: #0589bb}
+		.best { color: #2ed47f}
+		.title h2 { text-align: center; margin: 0 }
+		.title .right { position: absolute; text-align: right; width: 98%; font-size: 14px; }
+		.pop { animation: pop 0.2s linear 2; }
+		@keyframes pop{ 50% {transform: scale(1.3);} }
+		.finished { background: rgba(0, 128, 0, 0.60);}
+		#b-Trapper {border-bottom-left-radius: 20px}
+		#b-Blight {border-bottom-right-radius: 20px}
+    </style>
+</head>
+<body>
+<div class="bottom">
+	<div class="title">
+		<span class="right">!streak</span>
+		<h2>Killer Win Streak | <span class="current">C: Current</span> <span class="best">B: Best</span></h2>
+	</div>
+	<table>
+		<tr id="picture"></tr>
+		<tr id="current"></tr>
+		<tr id="best"></tr>
+	</table>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.min.js" integrity="sha512-/WwtKR6NnHomLo0O4w9QKc1INTPEJs7ko6u2aBTA1paPldhPl8LtXsi7a35iEZ69+9P5dcgVNESG8hrP4Y2t3w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+<script>
+	(async () => {
+		const putPicture = document.getElementById("picture");
+		const putCurrent = document.getElementById("current");
+		const putBest = document.getElementById("best");
+
+		const result = await axios.get("/data");
+		for (const key in result.data) {
+			if (!result.data.hasOwnProperty(key))
+				continue;
+
+			const pic = document.createElement("td");
+			const img = document.createElement("img");
+			img.src = "/img/" + key + ".png";
+
+			const cur = document.createElement("td");
+			cur.innerText = "C: " + result.data[key].c;
+			cur.id = "c-" + key;
+			cur.classList.add("current");
+			putCurrent.appendChild(cur);
+
+			const bes = document.createElement("td");
+			bes.innerText = "B: " + result.data[key].b;
+			bes.id = "b-" + key;
+			bes.classList.add("best");
+
+			if (result.data[key].b >= 50 || result.data[key].c >= 50) { // killer is finished
+				pic.classList.add("finished");
+				cur.classList.add("finished");
+				bes.classList.add("finished");
+			}
+
+			pic.appendChild(img);
+			putPicture.appendChild(pic);
+			putCurrent.appendChild(cur);
+			putBest.appendChild(bes);
+
+		}
+
+
+		const socket = io();
+		socket.on('data', function (data) {
+			if (data === "refresh") {
+				location.reload();
+			} else {
+				for (const key in data) {
+					if (!data.hasOwnProperty(key))
+						continue;
+
+					let newText;
+
+					const c = document.getElementById("c-" + key);
+					newText = "C: " + data[key].c;
+					if (c.innerText !== newText) {
+						c.classList.add("pop");
+						c.innerText = newText;
+						setTimeout(() => {
+							c.classList.remove("pop");
+						}, 1000);
+					}
+
+					const b = document.getElementById("b-" + key);
+					newText = "B: " + data[key].b;
+					if (b.innerText !== newText) {
+						b.classList.add("pop");
+						b.innerText = newText;
+						setTimeout(() => {
+							b.classList.remove("pop");
+						}, 1000);
+					}
+				}
+			}
+		});
+	})()
+</script>
+</body>
+</html>
