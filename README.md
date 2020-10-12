@@ -1,4 +1,4 @@
-# Dead By Daylight - Killer Streak Overlay
+# Killer Streak Overlay - Dead By Daylight
 
 This was created for [Otzdarva's Twitch Stream](https://bit.ly/3lCy3MN). Otzdarva decided to take on a challenge, winning 50 Killer games in a row in Dead By Daylight. This while playing without Add-ons.
 
