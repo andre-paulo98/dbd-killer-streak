@@ -1,15 +1,15 @@
+const config = require("./config");
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const port = process.env.PORT || 3001;
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const config = require("./config")
 
 app.use(express.static('public'))
 app.use(express.json());
 
-app.set('trust proxy', true);
+app.set('trust proxy', config.IS_BEHIND_PROXY);
+
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -84,6 +84,6 @@ io.on('connection', function(socket){
 	});
 });
 
-http.listen(port, function(){
-	console.log('listening on *:' + port);
+http.listen(config.PORT, function(){
+	console.log('listening on *:' + config.PORT);
 });
