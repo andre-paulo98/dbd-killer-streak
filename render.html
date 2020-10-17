@@ -48,6 +48,7 @@
 			const pic = document.createElement("td");
 			const img = document.createElement("img");
 			img.src = "/img/" + key + ".png";
+			pic.id = "p-" + key;
 
 			const cur = document.createElement("td");
 			cur.innerText = "C: " + result.data[key].c;
@@ -85,6 +86,7 @@
 
 					let newText;
 
+					const p = document.getElementById("p-" + key);
 					const c = document.getElementById("c-" + key);
 					newText = "C: " + data[key].c;
 					if (c.innerText !== newText) {
@@ -104,6 +106,17 @@
 							b.classList.remove("pop");
 						}, 1000);
 					}
+
+					if (data[key].b >= 50 || data[key].c >= 50) { // killer is finished
+						p.classList.add("finished");
+						c.classList.add("finished");
+						b.classList.add("finished");
+					} else if(p.classList.contains("finished")){
+						p.classList.remove("finished");
+						c.classList.remove("finished");
+						b.classList.remove("finished");
+					}
+
 				}
 			}
 		});
