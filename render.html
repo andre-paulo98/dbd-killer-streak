@@ -3,10 +3,13 @@
 <head>
 	<title>Otz-Streak-Overlay</title>
 	<style>
+		html,body {height: 100%; width: 100%}
 		body { /*background-color: #777;*/ margin: 0; font-family: Verdana; color: #fff; font-weight: bold; overflow: hidden;}
 		.bottom { background-color: rgba(20, 20, 20, 0.6); width: 99%; margin: 0 auto; border-radius: 20px; padding: 3px;}
-		table { width: 100%; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 0; table-layout: fixed}
-		td {text-align: center;}
+		#main {height: 100%}
+		#main td {vertical-align: bottom}
+		table#content { width: 100%; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 0; table-layout: fixed}
+		#content td {text-align: center;}
 		img { width: 100% }
 		.current {color: #0589bb}
 		.best { color: #2ed47f}
@@ -20,20 +23,23 @@
     </style>
 </head>
 <body>
-<div class="bottom">
-	<div class="title">
-		<span class="right">!streak</span>
-		<h2>Killer Win Streak | <span class="current">C: Current</span> <span class="best">B: Best</span></h2>
+<table id="main"><tr><td>
+	<div class="bottom">
+		<div class="title">
+			<span class="right">!streak</span>
+			<h2>Killer Win Streak | <span class="current">C: Current</span> <span class="best">B: Best</span></h2>
+		</div>
+		<table id="content">
+			<tr id="picture"></tr>
+			<tr id="current"></tr>
+			<tr id="best"></tr>
+		</table>
 	</div>
-	<table>
-		<tr id="picture"></tr>
-		<tr id="current"></tr>
-		<tr id="best"></tr>
-	</table>
-</div>
+</td></tr></table>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.min.js" integrity="sha512-/WwtKR6NnHomLo0O4w9QKc1INTPEJs7ko6u2aBTA1paPldhPl8LtXsi7a35iEZ69+9P5dcgVNESG8hrP4Y2t3w==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+<script src="confetti.browser.min.js"></script>
 <script>
 	(async () => {
 		const putPicture = document.getElementById("picture");
@@ -91,6 +97,13 @@
 					newText = "C: " + data[key].c;
 					if (c.innerText !== newText) {
 						c.classList.add("pop");
+						if(data[key].c >= 50) {
+							let x, y;
+							let rect = p.getBoundingClientRect();
+							y = rect.y / window.innerHeight;
+							x = (rect.x + rect.width/2) / window.innerWidth;
+							showFireworks({x: x, y: y});
+						}
 						c.innerText = newText;
 						setTimeout(() => {
 							c.classList.remove("pop");
@@ -120,6 +133,24 @@
 				}
 			}
 		});
+
+		function showFireworks(pos) {
+			var end = Date.now() + (2 * 1000);
+			let i = 0;
+			(function frame() {
+				confetti({
+					particleCount: 6,
+					angle: 90,
+					spread: i,
+					origin: pos
+				});
+				i+=1
+
+				if (Date.now() < end) {
+					requestAnimationFrame(frame);
+				}
+			}());
+		}
 	})()
 </script>
 </body>
