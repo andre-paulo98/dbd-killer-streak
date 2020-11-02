@@ -70,11 +70,11 @@ async function parseData() {
 
 	// Get first sheet from document
 	const sheet = doc.sheetsByIndex[0];
-	await sheet.loadCells('B23:V25'); // load required cells with data
+	await sheet.loadCells('B11:V13'); // load required cells with data
 
 	// parse cells
 	for (let i = 1; i <= 21; i++) {
-		data[sheet.getCell(24, i).value] = {c: sheet.getCell(23, i).value || 0, b: sheet.getCell(22, i).value || 0};
+		data[sheet.getCell(12, i).value] = {c: sheet.getCell(11, i).value || 0, b: sheet.getCell(10, i).value || 0};
 	}
 }
 
