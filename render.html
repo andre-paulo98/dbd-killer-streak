@@ -20,6 +20,44 @@
 		.finished { background: rgba(0, 128, 0, 0.60);}
 		#b-Trapper {border-bottom-left-radius: 20px}
 		#b-Blight {border-bottom-right-radius: 20px}
+		@keyframes shadow-current {
+			0% { text-shadow: -1px -1px #fff, -2px -2px #0589bb }
+			6.67% { text-shadow: -0.5px -1px #fff, -1px -2px #0589bb }
+			13.33% { text-shadow: 0px -1px #fff, 0px -2px #0589bb }
+			20% { text-shadow: 0.5px -1px #fff, 1px -2px #0589bb }
+			26.67% { text-shadow: 1px -1px #fff, 2px -2px #0589bb }
+			33.33% { text-shadow: 1px -0.5px #fff, 2px -1px #0589bb }
+			40% { text-shadow: 1px 0px #fff, 2px 0px #0589bb }
+			46.67% { text-shadow: 1px 0.5px #fff, 2px 1px #0589bb }
+			53.33% { text-shadow: 1px 1px #fff, 2px 2px #0589bb }
+			60% { text-shadow: 0.5px 1px #fff, 1px 2px #0589bb }
+			66.67% { text-shadow: 0px 1px #fff, 0px 2px #0589bb }
+			73.33% { text-shadow: -0.5px 1px #fff, -1px 2px #0589bb }
+			80% { text-shadow: -1px 1px #fff, -2px 2px #0589bb }
+			86.67% { text-shadow: -1px 0.5px #fff, -2px 1px #0589bb }
+			93.33% { text-shadow: -1px 0px #fff, -2px 0px #0589bb }
+			100% { text-shadow: -1px -0.5px #fff, -2px -1px #0589bb }
+		}
+		@keyframes shadow-best {
+			0% { text-shadow: -1px -1px #fff, -2px -2px #2ed47f }
+			6.67% { text-shadow: -0.5px -1px #fff, -1px -2px #2ed47f }
+			13.33% { text-shadow: 0px -1px #fff, 0px -2px #2ed47f }
+			20% { text-shadow: 0.5px -1px #fff, 1px -2px #2ed47f }
+			26.67% { text-shadow: 1px -1px #fff, 2px -2px #2ed47f }
+			33.33% { text-shadow: 1px -0.5px #fff, 2px -1px #2ed47f }
+			40% { text-shadow: 1px 0px #fff, 2px 0px #2ed47f }
+			46.67% { text-shadow: 1px 0.5px #fff, 2px 1px #2ed47f }
+			53.33% { text-shadow: 1px 1px #fff, 2px 2px #2ed47f }
+			60% { text-shadow: 0.5px 1px #fff, 1px 2px #2ed47f }
+			66.67% { text-shadow: 0px 1px #fff, 0px 2px #2ed47f }
+			73.33% { text-shadow: -0.5px 1px #fff, -1px 2px #2ed47f }
+			80% { text-shadow: -1px 1px #fff, -2px 2px #2ed47f }
+			86.67% { text-shadow: -1px 0.5px #fff, -2px 1px #2ed47f }
+			93.33% { text-shadow: -1px 0px #fff, -2px 0px #2ed47f }
+			100% { text-shadow: -1px -0.5px #fff, -2px -1px #2ed47f }
+		}
+		.animation>span.current {animation-name: shadow-current; animation-duration: 1s; animation-iteration-count: infinite}
+		.animation>span.best {animation-name: shadow-best; animation-duration: 1s; animation-iteration-count: infinite}
     </style>
 </head>
 <body>
@@ -27,7 +65,7 @@
 	<div class="bottom">
 		<div class="title">
 			<span class="right">!streak</span>
-			<h2>Killer Win Streak | <span class="current">C: Current</span> <span class="best">B: Best</span></h2>
+			<h2 id="title">Killer Win Streak | <span class="current">C: Current</span> <span class="best">B: Best</span></h2>
 		</div>
 		<table id="content">
 			<tr id="picture"></tr>
@@ -85,6 +123,13 @@
 		socket.on('data', function (data) {
 			if (data === "refresh") {
 				location.reload();
+			} else if (data === "animate") {
+				let classList = document.getElementById("title").classList;
+				if(classList.contains("animation")){
+					classList.remove("animation")
+				} else {
+					classList.add("animation")
+				}
 			} else {
 				for (const key in data) {
 					if (!data.hasOwnProperty(key))

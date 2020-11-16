@@ -41,6 +41,11 @@ app.get('/force-refresh', function (req, res) {
 	res.send("ok")
 });
 
+app.get('/candb', function (req, res) {
+	io.emit("data", "animate");
+	res.send("done 👍");
+});
+
 app.get('/force-update', async function (req, res) {
 	await parseData();
 	res.json(data);
@@ -68,7 +73,6 @@ async function parseData() {
 		await doc.loadInfo();
 	}
 
-	// Get first sheet from document
 	const sheet = doc.sheetsByIndex[config.SPREADSHEET.SHEET_INDEX];
 	await sheet.loadCells(config.SPREADSHEET.RANGE); // load required cells with data
 
