@@ -130,6 +130,8 @@
 				} else {
 					classList.add("animation")
 				}
+			} else if (data === "hide") {
+				document.getElementById("main").style.display = "none";
 			} else {
 				for (const key in data) {
 					if (!data.hasOwnProperty(key))

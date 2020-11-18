@@ -41,6 +41,11 @@ app.get('/force-refresh', function (req, res) {
 	res.send("ok")
 });
 
+app.get('/hide', function (req, res) {
+	io.emit("data", "hide");
+	res.send("ok")
+});
+
 app.get('/candb', function (req, res) {
 	io.emit("data", "animate");
 	res.send("done 👍");
