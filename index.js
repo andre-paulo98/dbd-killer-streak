@@ -62,6 +62,11 @@ app.get('/webhook-send-update', async function (req, res) {
 	res.send("ok");
 });
 
+app.get('/confetti/:killer', async function (req, res) {
+	io.emit("data", {"confetti": req.params.killer});
+	res.send("ok");
+});
+
 async function parseData() {
 
 	// authenticate Google API

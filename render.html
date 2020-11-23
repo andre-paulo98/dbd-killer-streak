@@ -123,6 +123,14 @@
 		socket.on('data', function (data) {
 			if (data === "refresh") {
 				location.reload();
+			} else if (data['confetti']) {
+				console.log(data['confetti'])
+				const p = document.getElementById("p-" + data['confetti']);
+				let rect = p.getBoundingClientRect();
+				const y = rect.y / window.innerHeight;
+				const x = (rect.x + rect.width/2) / window.innerWidth;
+				
+				showFireworks({x: x, y: y});
 			} else if (data === "animate") {
 				let classList = document.getElementById("title").classList;
 				if(classList.contains("animation")){
