@@ -67,6 +67,11 @@ app.get('/confetti/:killer', async function (req, res) {
 	res.send("ok");
 });
 
+app.get('/fireworks', async function (req, res) {
+	io.emit("data", "fireworks");
+	res.send("ok");
+});
+
 async function parseData() {
 
 	// authenticate Google API

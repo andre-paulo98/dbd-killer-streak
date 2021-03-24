@@ -130,6 +130,8 @@
 		socket.on('data', function (data) {
 			if (data === "refresh") {
 				location.reload();
+			} else if (data === "fireworks") {
+				showFireworks();
 			} else if (data['confetti']) {
 				console.log(data['confetti'])
 				const p = document.getElementById("p-" + data['confetti']);
