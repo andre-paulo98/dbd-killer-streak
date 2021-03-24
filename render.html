@@ -18,6 +18,10 @@
 		.pop { animation: pop 0.2s linear 2; }
 		@keyframes pop{ 50% {transform: scale(1.3);} }
 		.finished { background: rgba(0, 128, 0, 0.60);}
+		.half-finished {background: rgba(0, 255, 31, 0.12)}
+		.golden { background: rgba(255,210, 17,0.8)}
+		.best.golden {color: #5d3603;}
+		.current.golden {color: #fff6d3;}
 		#b-Trapper {border-bottom-left-radius: 20px}
 		#b-Twins {border-bottom-right-radius: 20px}
 		@keyframes shadow-current {
@@ -58,7 +62,7 @@
 		}
 		.animation>span.current {animation-name: shadow-current; animation-duration: 1s; animation-iteration-count: infinite}
 		.animation>span.best {animation-name: shadow-best; animation-duration: 1s; animation-iteration-count: infinite}
-		.half-finished {background: rgba(0, 255, 31, 0.12)}
+
     </style>
 </head>
 <body>
@@ -108,7 +112,12 @@
 			bes.id = "b-" + htmlKey;
 			bes.classList.add("best");
 
-			if (result.data[key].b >= 50 || result.data[key].c >= 50) { // killer is finished
+			if(result.data[key].b >= 100 || result.data[key].c >= 100) {
+				pic.classList.add("golden");
+				cur.classList.add("golden");
+				bes.classList.add("golden");
+			}
+			else if (result.data[key].b >= 50 || result.data[key].c >= 50) { // killer is finished
 				pic.classList.add("finished");
 				cur.classList.add("finished");
 				bes.classList.add("finished");
@@ -199,21 +208,41 @@
 						}, 1000);
 					}
 
-					if (data[key].b >= 50 || data[key].c >= 50) { // killer is finished
+					if (data[key].b >= 100 || data[key].c >= 100) {
+						p.classList.add("golden");
+						c.classList.add("golden");
+						b.classList.add("golden");
+						p.classList.remove('half-finished');
+						c.classList.remove('half-finished');
+						b.classList.remove('half-finished');
+						p.classList.remove('finished');
+						c.classList.remove('finished');
+						b.classList.remove('finished');
+					}else if (data[key].b >= 50 || data[key].c >= 50) { // killer is finished
 						p.classList.remove('half-finished');
 						c.classList.remove('half-finished');
 						b.classList.remove('half-finished');
 						p.classList.add("finished");
 						c.classList.add("finished");
 						b.classList.add("finished");
+						p.classList.remove('golden');
+						c.classList.remove('golden');
+						b.classList.remove('golden');
 					} else if (data[key].b >= 20 || data[key].c >= 20) {
 						p.classList.add("half-finished");
 						c.classList.add("half-finished");
 						b.classList.add("half-finished");
+						p.classList.remove('golden');
+						c.classList.remove('golden');
+						b.classList.remove('golden');
+						p.classList.remove('finished');
+						c.classList.remove('finished');
+						b.classList.remove('finished');
+
 					} else if(p.classList.contains("finished") || p.classList.contains("half-finished")){
-						p.classList.remove("finished", "half-finished");
-						c.classList.remove("finished", "half-finished");
-						b.classList.remove("finished", "half-finished");
+						p.classList.remove("finished", "half-finished", "golden");
+						c.classList.remove("finished", "half-finished", "golden");
+						b.classList.remove("finished", "half-finished", "golden");
 					}
 
 				}
