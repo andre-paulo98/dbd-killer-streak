@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Mini-Killer Streak</title>
+	<style>
+		body {
+			font-family: Verdana, serif;
+			color: #fff;
+			font-size: 22px;
+		}
+		.bg {
+			margin: 8px;
+			width: 290px;
+			height: 51px;
+			background-color: rgba(20, 20, 20, 0.6);
+			border-radius: 20px 0 0 20px;
+			position: relative;
+		}
+		.bg > span {
+			position: absolute;
+		}
+		.top {
+			left: 9px
+		}
+		.bottom {
+			bottom: 0;
+			right: 27px;
+		}
+		.killer {
+			position: absolute;
+			right: -18px;
+			height: 56px;
+			top: -3px;
+		}
+	</style>
+</head>
+<body>
+	<div class="bg">
+		<span class="top"><span id="killer">Nemesis</span> Streak</span>
+		<span class="bottom">Wins in a row: <span id="number">0</span></span>
+		<img class="killer" id="killer-image" src="/img/Nemesis.png" alt="">
+	</div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js" integrity="sha512-2ho+gY0H62N4Z9oxD422L2ZYXiOMq9l+Aub1QNz4Z4UDOtDVxz4vk6O6R3Hqqc9Y7qSvZFl7cy3+eZ/ITnUrLA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+<script> // https://jsfiddle.net/bc_rikko/qwbfkv6y/2/
+(async () => {
+	const killer = document.getElementById("killer");
+	const number = document.getElementById("number");
+	const killerImage = document.getElementById("killer-image");
+
+	const result = await axios.get("/data");
+	number.innerText = result.data.Nemesis.c;
+
+
+	const socket = io();
+	socket.on('data', function (data) {
+		if (data === "refresh") {
+			location.reload();
+		} else if(data.Nemesis){
+			number.innerText = data.Nemesis.c;
+		}
+	});
+})()
+</script>
+</html>

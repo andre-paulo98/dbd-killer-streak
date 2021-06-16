@@ -32,6 +32,10 @@ app.get('/render', function (req, res) {
 	res.sendFile(__dirname + "/render.html");
 });
 
+app.get('/mini-render', function (req, res) {
+	res.sendFile(__dirname + "/mini-render.html");
+});
+
 app.get('/data', function (req, res) {
 	res.json(data);
 });
