@@ -1,4 +1,5 @@
 const config = require("./config");
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
@@ -32,8 +33,26 @@ app.get('/render', function (req, res) {
 	res.sendFile(__dirname + "/render.html");
 });
 
-app.get('/mini-render', function (req, res) {
-	res.sendFile(__dirname + "/mini-render.html");
+app.get('/mini-render/', function (req, res) {
+	res.send("ERROR: Add a killer to the URL. Example: /mini-render/Nemesis");
+});
+
+app.get('/mini-render/:killer', function (req, res) {
+
+	if(req.params.killer) {
+		if(!data[req.params.killer]) {
+			res.send("ERROR: THE KILLER '"+req.params.killer+"' DOES NOT EXIST! USE AS IT IS ON THE DOCUMENT.");
+			return;
+		}
+		let file = fs.readFileSync('mini-render.html', 'utf8');
+		if(file)
+			res.send(file.replace(/__KILLER__/ig, req.params.killer));
+	} else {
+		res.send("ERROR: Add a killer to the URL. Example: /mini-render/Nemesis");
+	}
+
+
+	//res.sendFile(__dirname + "/mini-render.html");
 });
 
 app.get('/data', function (req, res) {

@@ -37,9 +37,9 @@
 </head>
 <body>
 	<div class="bg">
-		<span class="top"><span id="killer">Nemesis</span> Streak</span>
+		<span class="top"><span id="killer">__KILLER__</span> Streak</span>
 		<span class="bottom">Wins in a row: <span id="number">0</span></span>
-		<img class="killer" id="killer-image" src="/img/Nemesis.png" alt="">
+		<img class="killer" id="killer-image" src="/img/__KILLER__.png" alt="">
 	</div>
 
 </body>
@@ -52,15 +52,15 @@
 	const killerImage = document.getElementById("killer-image");
 
 	const result = await axios.get("/data");
-	number.innerText = result.data.Nemesis.c;
+	number.innerText = result.data.__KILLER__.c;
 
 
 	const socket = io();
 	socket.on('data', function (data) {
 		if (data === "refresh") {
 			location.reload();
-		} else if(data.Nemesis){
-			number.innerText = data.Nemesis.c;
+		} else if(data.__KILLER__){
+			number.innerText = data.__KILLER__.c;
 		}
 	});
 })()
