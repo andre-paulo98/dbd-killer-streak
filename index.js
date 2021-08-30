@@ -64,6 +64,12 @@ app.get('/force-refresh', function (req, res) {
 	res.send("ok")
 });
 
+app.get('/fix-data', async function (req, res) {
+	await parseData();
+	io.emit("data", "refresh");
+	res.json(data);
+});
+
 app.get('/hide', function (req, res) {
 	io.emit("data", "hide");
 	res.send("ok")
