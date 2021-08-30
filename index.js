@@ -67,7 +67,7 @@ app.get('/force-refresh', function (req, res) {
 app.get('/fix-data', async function (req, res) {
 	await parseData();
 	io.emit("data", "refresh");
-	res.json(data);
+	res.send("Overlay should be good now!")
 });
 
 app.get('/hide', function (req, res) {
