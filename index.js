@@ -23,6 +23,8 @@ app.use(require('morgan')('combined'));
 const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
+const noPerksData = {matches: 0, average: 0.0};
+
 parseData();
 
 app.get('/', function (req, res) {
@@ -101,6 +103,14 @@ app.get('/fireworks', async function (req, res) {
 	res.send("ok");
 });
 
+app.get('/no-perks', async function (req, res) {
+	res.sendFile(__dirname + "/items.html");
+});
+
+app.get('/api/noPerks', function (req, res) {
+	res.json(noPerksData);
+});
+
 async function parseData() {
 
 	// authenticate Google API
@@ -136,6 +146,18 @@ async function parseData() {
 			b: sheet.getCell(bestLine, i).value || 0
 		};
 	}
+
+	await sheet.loadCells("AB11:AB19");
+
+	let newMatches = sheet.getCell(10, 27).value;
+	let newAverage = (sheet.getCell(16, 27).value * 100).toFixed(2);
+
+	if(newMatches !== noPerksData.matches || newAverage !== noPerksData.average) {
+		io.emit('data', {noPerks: noPerksData})
+	}
+
+	noPerksData.matches = newMatches;
+	noPerksData.average = newAverage;
 }
 
 io.on('connection', function (socket) {

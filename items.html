@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>No Perks Overlay</title>
+	<style>
+		body {
+			font-family: Verdana, serif;
+			color: #fff;
+			font-size: 22px;
+		}
+		p {
+			margin: 0;
+			text-align: center;
+		}
+		p.title {
+			text-decoration: underline;
+			font-size: 22px;
+			margin-bottom: 8px;
+		}
+		.bold {
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+<div class="bg">
+	<p class="title">OP Items !experiment</p>
+	<p>Matches played: <span id="played" class="bold"></span></p>
+	<p>Win Rate: <span id="winRate" class="bold"></span><span class="bold">%</span></p>
+</div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js" integrity="sha512-2ho+gY0H62N4Z9oxD422L2ZYXiOMq9l+Aub1QNz4Z4UDOtDVxz4vk6O6R3Hqqc9Y7qSvZFl7cy3+eZ/ITnUrLA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+<script> // https://jsfiddle.net/bc_rikko/qwbfkv6y/2/
+(async () => {
+	const played = document.getElementById("played");
+	const winRate = document.getElementById("winRate");
+
+	const result = await axios.get("/api/noPerks");
+	played.innerText = result.data.matches;
+	winRate.innerText = result.data.average;
+
+	const socket = io();
+	socket.on('data', function (data) {
+		if (data === "refresh") {
+			location.reload();
+		} else if(data.noPerks) {
+			played.innerText = data.noPerks.matches;
+			winRate.innerText = data.noPerks.average;
+		}
+	});
+})()
+</script>
+</html>
