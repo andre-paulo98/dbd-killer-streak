@@ -8,15 +8,19 @@
 			font-family: Verdana, serif;
 			color: #fff;
 			font-size: 22px;
+			background-color: #494949;
 		}
 		p {
 			margin: 0;
 			text-align: center;
 		}
-		p.title {
+		p.title, p.secondTitle {
 			text-decoration: underline;
 			font-size: 22px;
 			margin-bottom: 8px;
+		}
+		p.secondTitle {
+			margin-top: 18px;
 		}
 		.bold {
 			font-weight: bold;
@@ -28,6 +32,9 @@
 	<p class="title">OP Items !experiment</p>
 	<p>Matches played: <span id="played" class="bold"></span></p>
 	<p>Win Rate: <span id="winRate" class="bold"></span><span class="bold">%</span></p>
+	<p class="secondTitle">No Items</p>
+	<p>Matches played: <span id="playedNo" class="bold"></span></p>
+	<p>Win Rate: <span id="winRateNo" class="bold"></span><span class="bold">%</span></p>
 </div>
 
 </body>
@@ -38,17 +45,26 @@
 	const played = document.getElementById("played");
 	const winRate = document.getElementById("winRate");
 
+	const playedNo = document.getElementById("playedNo");
+	const winRateNo = document.getElementById("winRateNo");
+
 	const result = await axios.get("/api/noPerks");
-	played.innerText = result.data.matches;
-	winRate.innerText = result.data.average;
+	played.innerText = result.data.items.matches;
+	winRate.innerText = result.data.items.average;
+
+	playedNo.innerText = result.data.noItems.matches;
+	winRateNo.innerText = result.data.noItems.average;
 
 	const socket = io();
 	socket.on('data', function (data) {
 		if (data === "refresh") {
 			location.reload();
 		} else if(data.noPerks) {
-			played.innerText = data.noPerks.matches;
-			winRate.innerText = data.noPerks.average;
+			played.innerText = data.noPerks.items.matches;
+			winRate.innerText = data.noPerks.items.average;
+
+			playedNo.innerText = data.noPerks.noItems.matches;
+			winRateNo.innerText = data.noPerks.noItems.average;
 		}
 	});
 })()

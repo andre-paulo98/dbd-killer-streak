@@ -23,7 +23,7 @@ app.use(require('morgan')('combined'));
 const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
-const noPerksData = {matches: 0, average: 0.0};
+const noPerksData = {items: {matches: 0, average: 0.0}, noItems: {matches: 0, average: 0.0}};
 
 parseData();
 
@@ -147,17 +147,30 @@ async function parseData() {
 		};
 	}
 
-	await sheet.loadCells("AB11:AB19");
+	await sheet.loadCells("AB11:AG19");
 
-	let newMatches = sheet.getCell(10, 27).value;
-	let newAverage = (sheet.getCell(16, 27).value * 100).toFixed(2);
+	let newMatchesItems = sheet.getCell(10, 27).value;
+	let newAverageItems = (sheet.getCell(16, 27).value * 100).toFixed(2);
 
-	if(newMatches !== noPerksData.matches || newAverage !== noPerksData.average) {
-		io.emit('data', {noPerks: noPerksData})
+	let newMatchesNoItems = sheet.getCell(10, 31).value;
+	let newAverageNoItems = (sheet.getCell(16, 31).value * 100).toFixed(2);
+
+	let toEmit = false;
+	if(newMatchesItems !== noPerksData.items.matches || newAverageItems !== noPerksData.items.average ||
+		newMatchesNoItems !== noPerksData.noItems.matches || newAverageNoItems !== noPerksData.noItems.average) {
+
+		toEmit = true;
 	}
 
-	noPerksData.matches = newMatches;
-	noPerksData.average = newAverage;
+	noPerksData.items.matches = newMatchesItems;
+	noPerksData.items.average = newAverageItems;
+
+	noPerksData.noItems.matches = newMatchesNoItems;
+	noPerksData.noItems.average = newAverageNoItems;
+
+	if(toEmit) {
+		io.emit('data', {noPerks: noPerksData})
+	}
 }
 
 io.on('connection', function (socket) {
