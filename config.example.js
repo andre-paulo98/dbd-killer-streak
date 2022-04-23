@@ -9,7 +9,13 @@ module.exports = {
 			BEST: 11,
 			CURRENT: 12,
 			NAME: 13
-		}
+		},
+		ALL_PERK_STREAK: {
+			SHEET_INDEX: 2,
+			RANGE: "B9:C9",
+			CELL_COUNT: "B9",
+			CELL_PERCENTAGE: "C9",
+		},
 	},
 	IS_BEHIND_PROXY: false
 }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>All Perks Overlay</title>
+	<style>
+		body {
+			font-family: Verdana, serif;
+			color: #fff;
+			font-size: 22px;
+		}
+		.bg {
+			margin: 8px;
+			width: 290px;
+			height: 100px;
+			background-color: rgba(20, 20, 20, 0.6);
+			border-radius: 20px;
+			position: relative;
+		}
+		.bg > span {
+			position: absolute;
+			right: 15px;
+			text-align: right;
+			top: 6px;
+		}
+		.killer {
+			position: absolute;
+			left: 11px;
+			height: 100px;
+		}
+		.title {
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+<div class="bg">
+	<span class="text">
+		<span class="title">!AllPerkStreak</span><br>
+		<span class="count"><span id="count">0</span>/27 Killers</span><br>
+		<span class="percentage">(<span id="percentage">0.00</span>%)</span>
+	</span>
+	<img class="killer" src="/img/allperkstreak.png" alt="">
+</div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js" integrity="sha512-2ho+gY0H62N4Z9oxD422L2ZYXiOMq9l+Aub1QNz4Z4UDOtDVxz4vk6O6R3Hqqc9Y7qSvZFl7cy3+eZ/ITnUrLA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script> // https://jsfiddle.net/bc_rikko/qwbfkv6y/2/
+(async () => {
+	const count = document.getElementById("count");
+	const percentage = document.getElementById("percentage");
+
+	const result = await axios.get("/allPerkData");
+	count.innerText = result.data.count;
+	percentage.innerText = result.data.percentage;
+
+
+	const socket = io();
+	socket.on('allPerkData', function (data) {
+		if (data === "refresh") {
+			location.reload();
+		} else if(data){
+			count.innerText = data.count;
+			percentage.innerText = data.percentage;
+		}
+	});
+})()
+</script>
+</html>

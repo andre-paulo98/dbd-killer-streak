@@ -23,6 +23,7 @@ app.use(require('morgan')('combined'));
 const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
+const allPerksData = {count: 0, percentage: 0};
 parseData();
 
 app.get('/', function (req, res) {
@@ -55,8 +56,16 @@ app.get('/mini-render/:killer', function (req, res) {
 	//res.sendFile(__dirname + "/mini-render.html");
 });
 
+app.get('/all-perk-overlay/', function (req, res) {
+	res.sendFile(__dirname + "/allperks.html");
+});
+
 app.get('/data', function (req, res) {
 	res.json(data);
+});
+
+app.get('/allPerkData', function (req, res) {
+	res.json(allPerksData);
 });
 
 app.get('/force-refresh', function (req, res) {
@@ -88,6 +97,7 @@ app.get('/force-update', async function (req, res) {
 app.get('/webhook-send-update', async function (req, res) {
 	await parseData();
 	io.emit("data", data);
+	io.emit("allPerkData", allPerksData);
 	res.send("ok");
 });
 
@@ -136,6 +146,14 @@ async function parseData() {
 			b: sheet.getCell(bestLine, i).value || 0
 		};
 	}
+
+	///// All Perk Streak
+
+	const sheetAllPerk = doc.sheetsByIndex[config.SPREADSHEET.ALL_PERK_STREAK.SHEET_INDEX];
+	await sheetAllPerk.loadCells(config.SPREADSHEET.ALL_PERK_STREAK.RANGE);
+
+	allPerksData.count = sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_COUNT).value;
+	allPerksData.percentage = ((sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).value) * 100).toFixed(2);
 }
 
 io.on('connection', function (socket) {
