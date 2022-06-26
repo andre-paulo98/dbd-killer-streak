@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Chase Time Screen</title>
+	<style>
+		body {
+			font-family: Verdana, serif;
+			color: #fff;
+			font-size: 22px;
+		}
+		.bg {
+			width: 290px;
+			height: 100px;
+			border-radius: 20px;
+			position: relative;
+		}
+		.bg > span {
+			position: absolute;
+			left: 15px;
+			text-align: left;
+			top: 6px;
+		}
+		.killer {
+			position: absolute;
+			left: 11px;
+			height: 100px;
+		}
+		.title {
+			font-weight: bold;
+			color: #55CB8C;
+			text-shadow: 0 0 2px #38875c;
+		}
+		.count {
+			font-size: 48px;
+			color: #55CB8C;
+			text-shadow: 0 0 3px #38875c;
+		}
+		body {
+			background-color: #555555;
+		}
+	</style>
+</head>
+<body>
+<div class="bg" id="whole">
+	<span class="text">
+		<span class="title">Chase Time</span><br>
+		<span class="count" id="timer">00:00</span><br>
+		<span>Screen is: <span id="isVisible">visible</span></span><br>
+		<button id="start">Start</button>
+		<button id="stop">Stop</button>
+		<button id="hide">Hide</button>
+	</span>
+</div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js" integrity="sha512-2ho+gY0H62N4Z9oxD422L2ZYXiOMq9l+Aub1QNz4Z4UDOtDVxz4vk6O6R3Hqqc9Y7qSvZFl7cy3+eZ/ITnUrLA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script> // https://jsfiddle.net/bc_rikko/qwbfkv6y/2/
+(async () => {
+
+	document.getElementById("start").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/start")
+	})
+
+	document.getElementById("stop").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/stop")
+	})
+
+	document.getElementById("hide").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/hide")
+	})
+
+	let timerData = {};
+	const timer = document.getElementById("timer");
+	const whole = document.getElementById("whole");
+	const isVisible = document.getElementById("isVisible");
+
+	const result = await axios.get("/data/timer");
+	timerData = result.data;
+	update()
+
+	const socket = io();
+	socket.on('timer', function (data) {
+		timerData = data;
+		update();
+	});
+
+	socket.on('data', function (data) {
+		if (data === "refresh") {
+			location.reload();
+		}
+	});
+
+	function update() {
+		if(timerData.isRunning) {
+			//whole.style.display = 'block';
+			isVisible.innerText = "visible";
+		}
+		if(timerData.isVisible) {
+			//whole.style.display = 'block';
+			isVisible.innerText = "visible";
+		} else {
+			//whole.style.display = 'none';
+			isVisible.innerText = "hidden";
+		}
+		updateTimer()
+	}
+
+	setInterval(() => {
+		if(timerData.isRunning) {
+			updateTimer();
+		}
+	}, 200)
+
+	function updateTimer() {
+		if(timerData.started) {
+			let now = new Date().getTime();
+			let difference = now - timerData.started;
+			let seconds = Math.floor(difference/1000);
+			let minutes = 0;
+			if(seconds >= 60) {
+				minutes = Math.floor(seconds/60);
+				seconds = seconds%60;
+			}
+			timer.innerText = `${pad(minutes)}:${pad(seconds)}`;
+		} else {
+			timer.innerText = '00:00';
+		}
+	}
+
+	function pad(number) {
+		if(number < 10) {
+			return '0' + number;
+		}
+		return number+'';
+	}
+})()
+
+
+</script>
+</html>

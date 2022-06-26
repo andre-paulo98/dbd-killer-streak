@@ -24,6 +24,7 @@ const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
 const allPerksData = {count: 0, percentage: 0};
+let timer = {started: 0, isRunning: false, isVisible: false};
 parseData();
 
 app.get('/', function (req, res) {
@@ -110,6 +111,42 @@ app.get('/fireworks', async function (req, res) {
 	io.emit("data", "fireworks");
 	res.send("ok");
 });
+
+app.get('/chaseTimer/screen', function (req, res) {
+	res.sendFile(__dirname + "/chase-time-screen.html");
+});
+
+app.get('/chaseTimer/button', function (req, res) {
+	res.sendFile(__dirname + "/chase-time-button.html");
+});
+
+app.get('/data/timer', function (req, res) {
+	res.json(timer);
+});
+
+app.get('/api/timer/start', function (req, res) {
+	timer.started = new Date().getTime();
+	timer.isRunning = true;
+	timer.isVisible = true;
+	io.emit("timer", timer);
+	res.json(timer);
+});
+
+app.get('/api/timer/stop', function (req, res) {
+	timer.isRunning = false;
+	timer.isVisible = true;
+	io.emit("timer", timer);
+	res.json(timer);
+});
+
+app.get('/api/timer/hide', function (req, res) {
+	timer.started = 0;
+	timer.isRunning = false;
+	timer.isVisible = false;
+	io.emit("timer", timer);
+	res.json(timer);
+});
+
 
 async function parseData() {
 
