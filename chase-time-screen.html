@@ -56,11 +56,13 @@
 (async () => {
 
 	let timerData = {};
+	let started = 0;
 	const timer = document.getElementById("timer");
 	const whole = document.getElementById("whole");
 
 	const result = await axios.get("/data/timer");
 	timerData = result.data;
+	started = result.data.started;
 	update()
 
 	const socket = io();
@@ -76,6 +78,9 @@
 	});
 
 	function update() {
+		if(timerData.justStarted) {
+			started = new Date().getTime();
+		}
 		if(timerData.isRunning) {
 			whole.style.display = 'block';
 		}
@@ -96,7 +101,7 @@
 	function updateTimer() {
 		if(timerData.started) {
 			let now = new Date().getTime();
-			let difference = now - timerData.started;
+			let difference = now - started;
 			let seconds = Math.floor(difference/1000);
 			let minutes = 0;
 			if(seconds >= 60) {

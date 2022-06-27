@@ -128,7 +128,7 @@ app.get('/api/timer/start', function (req, res) {
 	timer.started = new Date().getTime();
 	timer.isRunning = true;
 	timer.isVisible = true;
-	io.emit("timer", timer);
+	io.emit("timer", {...timer, justStarted: true});
 	res.json(timer);
 });
 
