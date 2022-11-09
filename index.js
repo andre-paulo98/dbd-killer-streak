@@ -23,7 +23,9 @@ app.use(require('morgan')('combined'));
 const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
+const dataVersus = {first: {avg: 0, games: 0}, second: {avg: 0, games: 0}};
 parseData();
+parseDataVersus();
 
 app.get('/', function (req, res) {
 	res.send("ok");
@@ -55,12 +57,33 @@ app.get('/mini-render/:killer', function (req, res) {
 	//res.sendFile(__dirname + "/mini-render.html");
 });
 
+app.get("/killerVersus/:order/:textColor/:textColor2", function(req, res) {
+	if(req.params.order && req.params.textColor && req.params.textColor2) {
+		if(req.params.order === "first" || req.params.order === "second") {
+			let file = fs.readFileSync('killer-versus.html', 'utf8');
+			if(file)
+				res.send(file.replace(/__KILLER__/ig, req.params.order).replace(/__TEXT_COLOR_1__/ig, req.params.textColor).replace(/__TEXT_COLOR_2__/ig, req.params.textColor2));
+		} else {
+			res.send("ERROR: Add a killer to the URL. Example: /killerVersus/first or /killerVersus/second");
+		}
+	} else {
+		res.send("ERROR: Add a killer to the URL. Example: /killerVersus/first or /killerVersus/second and a color for the text. Example: /killerVersus/first/#ffffff");
+	}
+});
+app.get("/dataVersus/", function(req, res) {
+	res.json(dataVersus);
+});
+app.get("/dataVersus/:order", function(req, res) {
+	res.json(dataVersus[req.params.order]);
+});
+
 app.get('/data', function (req, res) {
 	res.json(data);
 });
 
 app.get('/force-refresh', function (req, res) {
 	io.emit("data", "refresh");
+	io.emit("dataVersus", "refresh");
 	res.send("ok")
 });
 
@@ -88,6 +111,9 @@ app.get('/force-update', async function (req, res) {
 app.get('/webhook-send-update', async function (req, res) {
 	await parseData();
 	io.emit("data", data);
+
+	await parseDataVersus();
+	io.emit("dataVersus", dataVersus);
 	res.send("ok");
 });
 
@@ -135,6 +161,35 @@ async function parseData() {
 			c: sheet.getCell(currentLine, i).value || 0,
 			b: sheet.getCell(bestLine, i).value || 0
 		};
+	}
+}
+
+async function parseDataVersus() {
+
+	// authenticate Google API
+	if (!doc.authMode) {
+		await doc.useApiKey(config.GOOGLE_API_KEY);
+	}
+
+	// Check if file is loaded
+	try {
+		if (!doc.title) {
+			await doc.loadInfo();
+		}
+	} catch (e) {
+		await doc.loadInfo();
+	}
+
+	const sheet = doc.sheetsByIndex[config.SPREADSHEET.KILLER_VERSUS.SHEET_INDEX];
+	await sheet.loadCells(config.SPREADSHEET.KILLER_VERSUS.RANGE); // load required cells with data
+
+	dataVersus.first = {
+		avg: ((sheet.getCellByA1(config.SPREADSHEET.KILLER_VERSUS.KILLER1_KILLS).value)).toFixed(2),
+		games: sheet.getCellByA1(config.SPREADSHEET.KILLER_VERSUS.KILLER1_MATCHES).value,
+	}
+	dataVersus.second = {
+		avg: ((sheet.getCellByA1(config.SPREADSHEET.KILLER_VERSUS.KILLER2_KILLS).value)).toFixed(2),
+		games: sheet.getCellByA1(config.SPREADSHEET.KILLER_VERSUS.KILLER2_MATCHES).value,
 	}
 }
 
