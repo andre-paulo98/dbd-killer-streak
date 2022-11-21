@@ -121,7 +121,7 @@
 				pic.classList.add("finished");
 				cur.classList.add("finished");
 				bes.classList.add("finished");
-			} else if (result.data[key].b >= 20 || result.data[key].c >= 20) {
+			} else if (result.data[key].b >= 25 || result.data[key].c >= 25) {
 				pic.classList.add("half-finished");
 				cur.classList.add("half-finished");
 				bes.classList.add("half-finished");
@@ -185,7 +185,7 @@
 							y = rect.y / window.innerHeight;
 							x = (rect.x + rect.width/2) / window.innerWidth;
 							showConfetti({x: x, y: y});
-						} else if (data[key].c === 20) {
+						} else if (data[key].c === 25) {
 							let x, y;
 							let rect = p.getBoundingClientRect();
 							y = rect.y / window.innerHeight;
@@ -228,7 +228,7 @@
 						p.classList.remove('golden');
 						c.classList.remove('golden');
 						b.classList.remove('golden');
-					} else if (data[key].b >= 20 || data[key].c >= 20) {
+					} else if (data[key].b >= 25 || data[key].c >= 25) {
 						p.classList.add("half-finished");
 						c.classList.add("half-finished");
 						b.classList.add("half-finished");
