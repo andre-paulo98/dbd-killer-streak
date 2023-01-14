@@ -60,8 +60,14 @@ app.get('/mini-render/:killer', function (req, res) {
 app.get('/all-perk-overlay/', function (req, res) {
 	res.sendFile(__dirname + "/allperks.html");
 });
+app.get('/all-perk-overlay/big', function (req, res) {
+	res.sendFile(__dirname + "/allperks-big.html");
+});
 app.get('/all-addons-overlay/', function (req, res) {
 	res.sendFile(__dirname + "/addons.html");
+});
+app.get('/all-addons-overlay/big', function (req, res) {
+	res.sendFile(__dirname + "/addons-big.html");
 });
 
 app.get('/data', function (req, res) {
