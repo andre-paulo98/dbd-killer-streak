@@ -80,6 +80,7 @@ app.get('/allPerkData', function (req, res) {
 
 app.get('/force-refresh', function (req, res) {
 	io.emit("data", "refresh");
+	io.emit("allPerkData", "refresh");
 	res.send("ok")
 });
 
