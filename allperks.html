@@ -26,7 +26,7 @@
 		}
 		.killer {
 			position: absolute;
-			left: 11px;
+			left: 0px;
 			height: 100px;
 		}
 		.title {
@@ -34,6 +34,19 @@
 		}
 		.percentage {
 			font-size: 17px;
+		}
+		.progress {
+			background-color: #fff;
+			height: 7px;
+			border-radius: 10px;
+			margin-top: 4px;
+			overflow: hidden;
+		}
+		.progress > span {
+			background-color: #4C9CC0;
+			display: block;
+			height: 7px;
+			transition: width 1s;
 		}
 	</style>
 </head>
@@ -43,6 +56,7 @@
 		<span class="title">!AllPerkStreak</span><br>
 		<span class="count"><span id="count">0</span>/<span id="quantity">0</span> Killers</span><br>
 		<div class="percentage">(<span id="percentage">0.00</span>%)</div>
+		<div class="progress"><span id="progressPercentage" style="width: 0%;"></span></div>
 	</span>
 	<img class="killer" src="/img/allperkstreak.png" alt="">
 </div>
@@ -55,12 +69,14 @@
 	const count = document.getElementById("count");
 	const percentage = document.getElementById("percentage");
 	const quantity = document.getElementById("quantity");
+	const progressPercentage = document.getElementById("progressPercentage");
 
 	const result = await axios.get("/allPerkData");
 	count.innerText = result.data.count;
 	percentage.innerText = result.data.percentage;
 	quantity.innerText = result.data.quantity;
-
+	progressPercentage.style.width = result.data.percentage + '%';
+	
 
 	const socket = io();
 	socket.on('allPerkData', function (data) {
@@ -70,6 +86,7 @@
 			count.innerText = data.count;
 			percentage.innerText = data.percentage;
 			quantity.innerText = data.quantity;
+			progressPercentage.style.width = data.percentage + '%';
 		}
 	});
 })()
