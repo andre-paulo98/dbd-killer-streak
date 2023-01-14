@@ -32,16 +32,19 @@
 		.title {
 			font-weight: bold;
 		}
+		.percentage {
+			font-size: 17px;
+		}
 	</style>
 </head>
 <body>
 <div class="bg">
 	<span class="text">
-		<span class="title">!AllPerkSurvivor</span><br>
-		<span class="count"><span id="count">0</span>/32 Survivors</span><br>
-		<span class="percentage">(<span id="percentage">0.00</span>%)</span>
+		<span class="title">!AllPerkStreak</span><br>
+		<span class="count"><span id="count">0</span>/<span id="quantity">0</span> Killers</span><br>
+		<div class="percentage">(<span id="percentage">0.00</span>%)</div>
 	</span>
-	<img class="killer" src="/img/allperkstreak-survivor.png" alt="">
+	<img class="killer" src="/img/allperkstreak.png" alt="">
 </div>
 
 </body>
@@ -51,10 +54,12 @@
 (async () => {
 	const count = document.getElementById("count");
 	const percentage = document.getElementById("percentage");
+	const quantity = document.getElementById("quantity");
 
 	const result = await axios.get("/allPerkData");
 	count.innerText = result.data.count;
 	percentage.innerText = result.data.percentage;
+	quantity.innerText = result.data.quantity;
 
 
 	const socket = io();
@@ -64,6 +69,7 @@
 		} else if(data){
 			count.innerText = data.count;
 			percentage.innerText = data.percentage;
+			quantity.innerText = data.quantity;
 		}
 	});
 })()

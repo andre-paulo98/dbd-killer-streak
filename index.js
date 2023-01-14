@@ -23,7 +23,7 @@ app.use(require('morgan')('combined'));
 const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
-const allPerksData = {count: 0, percentage: 0};
+const allPerksData = {count: 0, percentage: 0, quantity: 0, addons: {b: {q: 0, t: 4}, y: {q: 0, t: 5}, g: {q: 0, t: 5}, p: {q: 0, t: 4}, i: {q: 0, t: 2}}};
 let timer = {started: 0, isRunning: false, isVisible: false};
 parseData();
 
@@ -59,6 +59,9 @@ app.get('/mini-render/:killer', function (req, res) {
 
 app.get('/all-perk-overlay/', function (req, res) {
 	res.sendFile(__dirname + "/allperks.html");
+});
+app.get('/all-addons-overlay/', function (req, res) {
+	res.sendFile(__dirname + "/addons.html");
 });
 
 app.get('/data', function (req, res) {
@@ -191,6 +194,15 @@ async function parseData() {
 
 	allPerksData.count = sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_COUNT).value;
 	allPerksData.percentage = ((sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).value) * 100).toFixed(2);
+	let formula = (sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).formula).match(/.*?\/(\d*)/);
+	allPerksData.quantity = parseInt(formula[1]);
+	let keys = Object.keys(allPerksData.addons);
+
+	for (let i = config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_FIRST_ROW, j = 0; i <= config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_LAST_ROW; i++, j++) {
+		let v = sheetAllPerk.getCell(i, config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_COLUMN_NUMBER).value;
+		allPerksData.addons[keys[j]].q = v;
+	}
+	console.log(allPerksData);
 }
 
 io.on('connection', function (socket) {
