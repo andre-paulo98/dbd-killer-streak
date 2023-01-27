@@ -49,17 +49,31 @@
 			height: 30px;
 			transition: width 1s;
 		}
+		span.title::after {
+			content: '!AllPerkStreak';
+		}
+		span.count::after {
+			content: 'Killers';
+		}
+		img.killer {
+			background: url(/img/allperkstreak-big.png);
+			background-position: center;
+			background-size: contain;
+			background-repeat: no-repeat;
+			height: 558px;
+    		width: 709px;
+		}
 	</style>
 </head>
 <body>
 <div class="bg">
 	<span class="text">
-		<span class="title">!AllPerkStreak</span><br>
-		<span class="count"><span id="count">0</span>/<span id="quantity">0</span> Killers</span><br>
+		<span class="title"></span><br>
+		<span class="count"><span id="count">0</span>/<span id="quantity">0</span> </span><br>
 		<div class="percentage">(<span id="percentage">0.00</span>%)</div>
 		<div class="progress"><span id="progressPercentage" style="width: 0%;"></span></div>
 	</span>
-	<img class="killer" src="/img/allperkstreak-big.png" alt="">
+	<img class="killer" src="/img/transparent.png" alt="">
 </div>
 
 </body>
