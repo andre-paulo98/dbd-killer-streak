@@ -199,10 +199,13 @@ async function parseData() {
 	const sheetAllPerk = doc.sheetsByIndex[config.SPREADSHEET.ALL_PERK_STREAK.SHEET_INDEX];
 	await sheetAllPerk.loadCells(config.SPREADSHEET.ALL_PERK_STREAK.RANGE);
 
+	let percentageFullValue = ((sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).value) * 100)
+
 	allPerksData.count = sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_COUNT).value;
-	allPerksData.percentage = ((sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).value) * 100).toFixed(2);
+	allPerksData.percentage = percentageFullValue.toFixed(2);
 	let formula = (sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).formula).match(/.*?\/(\d*)/);
-	allPerksData.quantity = parseInt(formula[1]);
+	//allPerksData.quantity = parseInt(formula[1]);
+	allPerksData.quantity = Math.round(allPerksData.count * 100 / percentageFullValue);
 	let keys = Object.keys(allPerksData.addons);
 
 	for (let i = config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_FIRST_ROW, j = 0; i <= config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_LAST_ROW; i++, j++) {
