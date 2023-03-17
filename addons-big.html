@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>All Perks Overlay</title>
+	<script src="/vue.global.min.js"></script>
+	<style>
+		body {
+			font-family: Verdana, serif;
+			color: #fff;
+			font-size: 22px;
+		}
+		.bg {
+			width: 1880px;
+			height: 389px;
+			/*background-color: rgba(20, 20, 20, 0.6);*/
+			border-radius: 11px;
+			position: relative;
+            padding: 2px 5px;
+		}
+		.bg > span {
+			position: absolute;
+			right: 15px;
+			text-align: right;
+			top: 6px;
+			z-index: 99;
+		}
+		.killer {
+			left: 11px;
+			height: 100px;
+		}
+		.title {
+			font-weight: bold;
+		}
+		.percentage {
+			font-size: 17px;
+		}
+        div.addon {
+            margin: -2px;
+        }
+        img.addon {
+            width: 192px;
+            height: auto;
+        }
+        div.line {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        img.addon.disabled {
+            filter: brightness(17%) contrast(0.7);
+        }
+	</style>
+</head>
+<body>
+    <div id="v">
+        <div class="bg">
+            <div class="line" v-for="line in addons">
+                <div v-for="v in line" class="addon">
+                    <img :src="'/img/blank-addons/' + v.img + '.png'" alt="" :class="[v.disabled ? 'disabled' : 'enabled', 'addon']">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js" integrity="sha512-2ho+gY0H62N4Z9oxD422L2ZYXiOMq9l+Aub1QNz4Z4UDOtDVxz4vk6O6R3Hqqc9Y7qSvZFl7cy3+eZ/ITnUrLA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script>
+	const v = {
+		data() {
+			return {
+				players: [],
+                addons: [],
+			}
+		},
+		created() {
+            this.fetch();
+            let socket = io({
+				transports: ["websocket"],
+			});
+			socket.on('allPerkData', (data) => {
+                if (data === "refresh") {
+                    location.reload();
+                } else if(data){
+                    this.parseAndDisplay(data);
+                }
+            });
+		},
+		methods: {
+			fetch() {
+				axios.get("/allPerkData").then((response) => {
+                    this.parseAndDisplay(response.data);
+                });
+			},
+            parseAndDisplay(data) {
+                let line1 = [];
+                for (let i = 0; i < data.addons.b.t; i++) {
+                    line1.push({img: "0", disabled: i < data.addons.b.q});
+                }
+                for (let i = 0; i < data.addons.p.t; i++) {
+                    line1.push({img: "3", disabled: i < data.addons.p.q});
+                }
+                for (let i = 0; i < data.addons.i.t; i++) {
+                    line1.push({img: "4", disabled: i < data.addons.i.q});
+                }
+
+                let line2 = [];
+                for (let i = 0; i < data.addons.y.t; i++) {
+                    line2.push({img: "1", disabled: i < data.addons.y.q});
+                }
+                for (let i = 0; i < data.addons.g.t; i++) {
+                    line2.push({img: "2", disabled: i < data.addons.g.q});
+                }
+                this.addons = [line1, line2];
+            }
+		}
+	}
+	Vue.createApp(v).mount('#v');
+</script>
+
+
+<script> // https://jsfiddle.net/bc_rikko/qwbfkv6y/2/
+(async () => {
+	/*const count = document.getElementById("count");
+	const percentage = document.getElementById("percentage");
+	const quantity = document.getElementById("quantity");
+
+	const result = await axios.get("/allPerkData");
+	count.innerText = result.data.count;
+	percentage.innerText = result.data.percentage;
+	quantity.innerText = result.data.quantity;
+
+
+	const socket = io();
+	socket.on('allPerkData', function (data) {
+		if (data === "refresh") {
+			location.reload();
+		} else if(data){
+			count.innerText = data.count;
+			percentage.innerText = data.percentage;
+			quantity.innerText = data.quantity;
+		}
+	});*/
+})()
+</script>
+</html>

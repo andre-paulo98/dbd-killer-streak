@@ -23,6 +23,8 @@ app.use(require('morgan')('combined'));
 const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
+const allPerksData = {count: 0, percentage: 0, quantity: 0, addons: {b: {q: 0, t: 4}, y: {q: 0, t: 5}, g: {q: 0, t: 5}, p: {q: 0, t: 4}, i: {q: 0, t: 2}}};
+let timer = {started: 0, isRunning: false, isVisible: false};
 parseData();
 
 app.get('/', function (req, res) {
@@ -55,12 +57,30 @@ app.get('/mini-render/:killer', function (req, res) {
 	//res.sendFile(__dirname + "/mini-render.html");
 });
 
+app.get('/all-perk-overlay/', function (req, res) {
+	res.sendFile(__dirname + "/allperks.html");
+});
+app.get('/all-perk-overlay/big', function (req, res) {
+	res.sendFile(__dirname + "/allperks-big.html");
+});
+app.get('/all-addons-overlay/', function (req, res) {
+	res.sendFile(__dirname + "/addons.html");
+});
+app.get('/all-addons-overlay/big', function (req, res) {
+	res.sendFile(__dirname + "/addons-big.html");
+});
+
 app.get('/data', function (req, res) {
 	res.json(data);
 });
 
+app.get('/allPerkData', function (req, res) {
+	res.json(allPerksData);
+});
+
 app.get('/force-refresh', function (req, res) {
 	io.emit("data", "refresh");
+	io.emit("allPerkData", "refresh");
 	res.send("ok")
 });
 
@@ -88,6 +108,7 @@ app.get('/force-update', async function (req, res) {
 app.get('/webhook-send-update', async function (req, res) {
 	await parseData();
 	io.emit("data", data);
+	io.emit("allPerkData", allPerksData);
 	res.send("ok");
 });
 
@@ -100,6 +121,42 @@ app.get('/fireworks', async function (req, res) {
 	io.emit("data", "fireworks");
 	res.send("ok");
 });
+
+app.get('/chaseTimer/screen', function (req, res) {
+	res.sendFile(__dirname + "/chase-time-screen.html");
+});
+
+app.get('/chaseTimer/button', function (req, res) {
+	res.sendFile(__dirname + "/chase-time-button.html");
+});
+
+app.get('/data/timer', function (req, res) {
+	res.json(timer);
+});
+
+app.get('/api/timer/start', function (req, res) {
+	timer.started = new Date().getTime();
+	timer.isRunning = true;
+	timer.isVisible = true;
+	io.emit("timer", {...timer, justStarted: true});
+	res.json(timer);
+});
+
+app.get('/api/timer/stop', function (req, res) {
+	timer.isRunning = false;
+	timer.isVisible = true;
+	io.emit("timer", timer);
+	res.json(timer);
+});
+
+app.get('/api/timer/hide', function (req, res) {
+	timer.started = 0;
+	timer.isRunning = false;
+	timer.isVisible = false;
+	io.emit("timer", timer);
+	res.json(timer);
+});
+
 
 async function parseData() {
 
@@ -136,6 +193,26 @@ async function parseData() {
 			b: sheet.getCell(bestLine, i).value || 0
 		};
 	}
+
+	///// All Perk Streak
+
+	const sheetAllPerk = doc.sheetsByIndex[config.SPREADSHEET.ALL_PERK_STREAK.SHEET_INDEX];
+	await sheetAllPerk.loadCells(config.SPREADSHEET.ALL_PERK_STREAK.RANGE);
+
+	let percentageFullValue = ((sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).value) * 100)
+
+	allPerksData.count = sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_COUNT).value;
+	allPerksData.percentage = percentageFullValue.toFixed(2);
+	let formula = (sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).formula).match(/.*?\/(\d*)/);
+	//allPerksData.quantity = parseInt(formula[1]);
+	allPerksData.quantity = Math.round(allPerksData.count * 100 / percentageFullValue);
+	let keys = Object.keys(allPerksData.addons);
+
+	for (let i = config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_FIRST_ROW, j = 0; i <= config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_LAST_ROW; i++, j++) {
+		let v = sheetAllPerk.getCell(i, config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_COLUMN_NUMBER).value;
+		allPerksData.addons[keys[j]].q = v;
+	}
+	console.log(allPerksData);
 }
 
 io.on('connection', function (socket) {
