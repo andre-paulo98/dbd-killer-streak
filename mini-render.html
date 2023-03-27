@@ -52,15 +52,15 @@
 	const killerImage = document.getElementById("killer-image");
 
 	const result = await axios.get("/data");
-	number.innerText = result.data.__KILLER__.c;
+	number.innerText = result.data['__KILLER__'].c;
 
 
 	const socket = io();
 	socket.on('data', function (data) {
 		if (data === "refresh") {
 			location.reload();
-		} else if(data.__KILLER__){
-			number.innerText = data.__KILLER__.c;
+		} else if(data['__KILLER__']){
+			number.innerText = data['__KILLER__'].c;
 		}
 	});
 })()
