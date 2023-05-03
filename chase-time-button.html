@@ -54,6 +54,8 @@
 		<button id="start-3">Start 3 minutes</button>
 		<button id="start-5">Start 5 minutes</button>
 		<button id="start-7">Start 7 minutes</button>
+		<button id="start-10">Start 10 minutes</button>
+		<button id="start-15">Start 15 minutes</button>
 	</span>
 </div>
 
@@ -86,7 +88,17 @@ counts as a death*/
 	
 	document.getElementById("start-7").addEventListener("click", (e) => {
 		e.preventDefault();
-		axios.get("/api/timer/start?minutes=3")
+		axios.get("/api/timer/start?minutes=7")
+	})
+	
+	document.getElementById("start-10").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/start?minutes=10")
+	})
+	
+	document.getElementById("start-15").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/start?minutes=15")
 	})
 
 	document.getElementById("stop").addEventListener("click", (e) => {
