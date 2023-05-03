@@ -135,7 +135,12 @@ app.get('/data/timer', function (req, res) {
 });
 
 app.get('/api/timer/start', function (req, res) {
-	timer.started = new Date().getTime();
+	if(req.query.minutes) {
+		timer.end = new Date().getTime() + (req.query.minutes * 60 * 1000);
+	} else {
+		timer.started = new Date().getTime();
+	}
+	console.log(timer);
 	timer.isRunning = true;
 	timer.isVisible = true;
 	io.emit("timer", {...timer, justStarted: true});

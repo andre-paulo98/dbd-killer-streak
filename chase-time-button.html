@@ -10,7 +10,7 @@
 			font-size: 22px;
 		}
 		.bg {
-			width: 290px;
+			/*width: 500px;*/
 			height: 100px;
 			border-radius: 20px;
 			position: relative;
@@ -50,6 +50,10 @@
 		<button id="start">Start</button>
 		<button id="stop">Stop</button>
 		<button id="hide">Hide</button>
+		<br>
+		<button id="start-3">Start 3 minutes</button>
+		<button id="start-5">Start 5 minutes</button>
+		<button id="start-7">Start 7 minutes</button>
 	</span>
 </div>
 
@@ -58,10 +62,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script> // https://jsfiddle.net/bc_rikko/qwbfkv6y/2/
 (async () => {
+/*
+What if you start with a 30 minute countdown like a subathon and 
+Everytime you die you remove 1 minute and every time you successfully 
+raid a base you 2/4/7 minutes depending on the difficulty rating. 
+Timer is over = you close the stream. Also abandoning the Raid 
+counts as a death*/
 
 	document.getElementById("start").addEventListener("click", (e) => {
 		e.preventDefault();
 		axios.get("/api/timer/start")
+	})
+
+	document.getElementById("start-3").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/start?minutes=3")
+	})
+	
+	document.getElementById("start-5").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/start?minutes=5")
+	})
+	
+	document.getElementById("start-7").addEventListener("click", (e) => {
+		e.preventDefault();
+		axios.get("/api/timer/start?minutes=3")
 	})
 
 	document.getElementById("stop").addEventListener("click", (e) => {

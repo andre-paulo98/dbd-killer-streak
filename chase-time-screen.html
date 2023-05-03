@@ -30,6 +30,7 @@
 			font-weight: bold;
 			color: #55CB8C;
 			text-shadow: 0 0 2px #38875c;
+			display:none;
 		}
 		.count {
 			font-size: 48px;
@@ -57,12 +58,14 @@
 
 	let timerData = {};
 	let started = 0;
+	let end = 0;
 	const timer = document.getElementById("timer");
 	const whole = document.getElementById("whole");
 
 	const result = await axios.get("/data/timer");
 	timerData = result.data;
 	started = result.data.started;
+	end = result.data.end;
 	update()
 
 	const socket = io();
@@ -79,7 +82,11 @@
 
 	function update() {
 		if(timerData.justStarted) {
-			started = new Date().getTime();
+			if(timerData.started) {
+				started = new Date().getTime();
+			} else {
+				end = timerData.end;
+			}
 		}
 		if(timerData.isRunning) {
 			whole.style.display = 'block';
@@ -108,6 +115,22 @@
 				minutes = Math.floor(seconds/60);
 				seconds = seconds%60;
 			}
+			timer.innerText = `${pad(minutes)}:${pad(seconds)}`;
+		} else if (timerData.end) {
+			let now = new Date().getTime();
+			let difference = end - now;
+			var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  			var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+			if(difference < 0) {
+				minutes = 0;
+				seconds = 0;
+			}
+			//let minutes = 0;
+			/*if(seconds >= 60) {
+				minutes = Math.floor(seconds/60);
+				seconds = seconds%60;
+			}*/
 			timer.innerText = `${pad(minutes)}:${pad(seconds)}`;
 		} else {
 			timer.innerText = '00:00';
