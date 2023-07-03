@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const {GoogleSpreadsheet} = require('google-spreadsheet');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 app.use(express.static('public'))
 app.use(express.json());
@@ -23,8 +23,8 @@ app.use(require('morgan')('combined'));
 const doc = new GoogleSpreadsheet(config.SPREADSHEET.ID);
 
 const data = {};
-const allPerksData = {count: 0, percentage: 0, quantity: 0, addons: {b: {q: 0, t: 4}, y: {q: 0, t: 5}, g: {q: 0, t: 5}, p: {q: 0, t: 4}, i: {q: 0, t: 2}}};
-let timer = {started: 0, isRunning: false, isVisible: false};
+const allPerksData = { count: 0, percentage: 0, quantity: 0, addons: { b: { q: 0, t: 4 }, y: { q: 0, t: 5 }, g: { q: 0, t: 5 }, p: { q: 0, t: 4 }, i: { q: 0, t: 2 } } };
+let timer = { started: 0, isRunning: false, isVisible: false };
 parseData();
 
 app.get('/', function (req, res) {
@@ -41,13 +41,13 @@ app.get('/mini-render/', function (req, res) {
 
 app.get('/mini-render/:killer', function (req, res) {
 
-	if(req.params.killer) {
-		if(!data[req.params.killer]) {
-			res.send("ERROR: THE KILLER '"+req.params.killer+"' DOES NOT EXIST! USE AS IT IS ON THE DOCUMENT.");
+	if (req.params.killer) {
+		if (!data[req.params.killer]) {
+			res.send("ERROR: THE KILLER '" + req.params.killer + "' DOES NOT EXIST! USE AS IT IS ON THE DOCUMENT.");
 			return;
 		}
 		let file = fs.readFileSync('mini-render.html', 'utf8');
-		if(file)
+		if (file)
 			res.send(file.replace(/__KILLER__/ig, req.params.killer));
 	} else {
 		res.send("ERROR: Add a killer to the URL. Example: /mini-render/Nemesis");
@@ -113,7 +113,7 @@ app.get('/webhook-send-update', async function (req, res) {
 });
 
 app.get('/confetti/:killer', async function (req, res) {
-	io.emit("data", {"confetti": req.params.killer});
+	io.emit("data", { "confetti": req.params.killer });
 	res.send("ok");
 });
 
@@ -135,7 +135,7 @@ app.get('/data/timer', function (req, res) {
 });
 
 app.get('/api/timer/start', function (req, res) {
-	if(req.query.minutes) {
+	if (req.query.minutes) {
 		timer.end = new Date().getTime() + (req.query.minutes * 60 * 1000);
 	} else {
 		timer.started = new Date().getTime();
@@ -143,7 +143,7 @@ app.get('/api/timer/start', function (req, res) {
 	console.log(timer);
 	timer.isRunning = true;
 	timer.isVisible = true;
-	io.emit("timer", {...timer, justStarted: true});
+	io.emit("timer", { ...timer, justStarted: true });
 	res.json(timer);
 });
 
