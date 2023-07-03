@@ -5,18 +5,20 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+var cors = require('cors')
 
 app.use(express.static('public'))
 app.use(express.json());
+app.use(cors());
 
 app.set('trust proxy', config.IS_BEHIND_PROXY);
 
-app.use(function (req, res, next) {
+/*app.use(function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
 	next();
-});
+});*/
 app.use(require('morgan')('combined'));
 
 //const doc = new GoogleSpreadsheet('1gb0o1VTyfhcNePcCZO6k6dXMQ8Y5M-vwZawOYljO4fM'); // copy of file for dev testing
@@ -162,6 +164,21 @@ app.get('/api/timer/hide', function (req, res) {
 	res.json(timer);
 });
 
+app.post('/api/randomPerksData', function (req, res) {
+	if (req.body.count === undefined || req.body.quantity === undefined) {
+		return error(res, 400, "no data");
+	}
+
+	const count = parseInt(req.body.count);
+	const quantity = parseInt(req.body.quantity);
+
+	allPerksData.count = count;
+	allPerksData.quantity = quantity;
+	allPerksData.percentage = Math.round(count / quantity * 100 * 100) / 100;
+
+	io.emit("allPerkData", allPerksData);
+	res.json(allPerksData);
+})
 
 async function parseData() {
 
@@ -210,7 +227,14 @@ async function parseData() {
 	allPerksData.percentage = percentageFullValue.toFixed(2);
 	let formula = (sheetAllPerk.getCellByA1(config.SPREADSHEET.ALL_PERK_STREAK.CELL_PERCENTAGE).formula).match(/.*?\/(\d*)/);
 	//allPerksData.quantity = parseInt(formula[1]);
-	allPerksData.quantity = Math.round(allPerksData.count * 100 / percentageFullValue);
+	let quantity = Math.round(allPerksData.count * 100 / percentageFullValue);
+	if (!quantity)
+		quantity = formula[1];
+	if (!quantity)
+		quantity = allPerksData.quantity;
+		
+	quantity = parseInt(quantity);
+	allPerksData.quantity = quantity || 0;
 	let keys = Object.keys(allPerksData.addons);
 
 	for (let i = config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_FIRST_ROW, j = 0; i <= config.SPREADSHEET.ALL_PERK_STREAK.ADDONS_LAST_ROW; i++, j++) {
@@ -229,3 +253,14 @@ io.on('connection', function (socket) {
 http.listen(config.PORT, function () {
 	console.log('listening on *:' + config.PORT);
 });
+
+
+function error(res, code = 400, message = "unknown error") {
+	res.status(code);
+	if (typeof message === "object") {
+		res.json(message);
+	} else {
+		res.json({ "error": true, "message": message });
+	}
+
+}
