@@ -11,9 +11,9 @@
 		}
 		.bg {
 			margin: 8px;
-			width: 1894px;
-			height: 550px;
-			/*background-color: rgba(20, 20, 20, 0.6);*/
+			width: 320px;
+			height: 100px;
+			background-color: rgba(20, 20, 20, 0.6);
 			border-radius: 20px;
 			position: relative;
 		}
@@ -23,30 +23,29 @@
 			text-align: right;
 			top: 6px;
 			z-index: 99;
-			font-size: 145px;
 		}
 		.killer {
 			position: absolute;
 			left: 0px;
-			height: 558px;
+			height: 100px;
 		}
 		.title {
 			font-weight: bold;
 		}
 		.percentage {
-			font-size: 100px;
+			font-size: 17px;
 		}
 		.progress {
 			background-color: #fff;
-			height: 30px;
-			border-radius: 16px;
-			margin-top: 12px;
+			height: 7px;
+			border-radius: 10px;
+			margin-top: 4px;
 			overflow: hidden;
 		}
 		.progress > span {
 			background-color: #4C9CC0;
 			display: block;
-			height: 30px;
+			height: 7px;
 			transition: width 1s;
 		}
 		span.title::after {
@@ -56,12 +55,12 @@
 			content: 'Killers';
 		}
 		img.killer {
-			background: url(/img/allperkstreak-big.png);
+			background: url(/img/allperkstreak.png);
 			background-position: center;
 			background-size: contain;
 			background-repeat: no-repeat;
-			height: 558px;
-    		width: 709px;
+			height: 100px;
+    		width: 127px;
 		}
 	</style>
 </head>
@@ -75,6 +74,9 @@
 	</span>
 	<img class="killer" src="/img/transparent.png" alt="">
 </div>
+<!-- <div class="bg" style="position: absolute;left: 8px;top: 0px;text-align: center;line-height: 139px;">
+	Paused
+</div> -->
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js" integrity="sha512-2ho+gY0H62N4Z9oxD422L2ZYXiOMq9l+Aub1QNz4Z4UDOtDVxz4vk6O6R3Hqqc9Y7qSvZFl7cy3+eZ/ITnUrLA==" crossorigin="anonymous"></script>
@@ -86,7 +88,7 @@
 	const quantity = document.getElementById("quantity");
 	const progressPercentage = document.getElementById("progressPercentage");
 
-	const result = await axios.get("/allPerkData");
+	const result = await axios.get("/genericData");
 	count.innerText = result.data.count;
 	percentage.innerText = result.data.percentage;
 	quantity.innerText = result.data.quantity;
@@ -94,7 +96,7 @@
 	
 
 	const socket = io();
-	socket.on('allPerkData', function (data) {
+	socket.on('genericData', function (data) {
 		if (data === "refresh") {
 			location.reload();
 		} else if(data){
