@@ -39,8 +39,8 @@
 		const progressPercentage = document.getElementById("progressPercentage");
 
 		const result = await axios.get("/genericData");
-		count.innerText = result.data.count;
-		total.innerText = result.data.quantity;
+		count.value = result.data.count;
+		total.value = result.data.quantity;
 
 		document.querySelector("#submit").addEventListener("click", async () => {
 			const result = await axios.post("/api/randomPerksData", {
