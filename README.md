@@ -17,7 +17,7 @@ Yes! But please consider giving me credit for the work I put in.
 
 ### Setup seems complicated, can you host it for me?
 
-If you need a custom version, or a hosted version of this, you can contact me on Discord: `André Paulo#8446`, or join [this server](https://bit.ly/3lFD2MY).
+If you need a custom version, or a hosted version of this, you can contact me on Discord: [`andre.paulo`](https://discord.com/users/141205037413040128), or join [this server](https://bit.ly/3lFD2MY).
 
 ## Setup
 
