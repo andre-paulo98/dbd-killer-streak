@@ -10,6 +10,7 @@
 services:
   server:
     container_name: dbd-killer-streak
+    restart: always
     build:
       context: .
     environment:
